@@ -1,0 +1,20 @@
+Job Title: Backend Developer (Entry Level)
+
+We are looking for an entry-level backend developer to join our engineering
+team. The ideal candidate has experience building REST APIs, is comfortable
+with Python or Java, and has some exposure to cloud platforms like AWS or
+GCP. Experience with SQL databases and Docker is a plus. Fresh graduates
+with strong fundamentals in data structures and algorithms are encouraged
+to apply.
+
+Responsibilities:
+- Build and maintain REST APIs
+- Work with relational databases
+- Collaborate with the frontend team on API contracts
+- Write clean, tested code
+
+Requirements:
+- Bachelor's degree in Computer Science or related field
+- Proficiency in Python or Java
+- Familiarity with Git and version control
+- Basic understanding of cloud deployment

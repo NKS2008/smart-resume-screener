@@ -1,0 +1,19 @@
+Ananya Rao
+ananya.rao@email.com
++91 98765 43210
+
+EDUCATION
+B.Tech in Computer Science, VIT-AP University, 2022-2026
+CGPA: 8.6/10
+
+EXPERIENCE
+Software Engineering Intern, TechNova Solutions (Jun 2025 - Aug 2025)
+Built REST APIs using Python and FastAPI for an internal inventory tool.
+Worked with PostgreSQL and Docker for local development.
+
+SKILLS
+Python, JavaScript, React, FastAPI, SQL, Git, AWS, Machine Learning, Pandas
+
+PROJECTS
+Placement Portal - Full stack web app for campus placements using React and Node.js
+Career Prediction Model - ML model using scikit-learn to predict career fit from personality traits

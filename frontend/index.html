@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Smart Resume Screener</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>Smart Resume Screener</h1>
+    <p>Upload resumes, add a job description, and let the LLM rank the fit.</p>
+  </header>
+
+  <main>
+    <!-- Step 1: Job description -->
+    <section class="card">
+      <h2>1. Job Description</h2>
+      <input type="text" id="jobTitle" placeholder="Job title (e.g. Backend Developer)" />
+      <textarea id="jobDescription" rows="6" placeholder="Paste the job description here..."></textarea>
+      <button onclick="createJob()">Save Job</button>
+      <p id="jobStatus"></p>
+    </section>
+
+    <!-- Step 2: Upload resume -->
+    <section class="card">
+      <h2>2. Upload Resume</h2>
+      <input type="file" id="resumeFile" accept=".pdf,.txt" />
+      <button onclick="uploadResume()">Upload & Parse</button>
+      <div id="parsedResult"></div>
+    </section>
+
+    <!-- Step 3: Run match -->
+    <section class="card">
+      <h2>3. Run Match</h2>
+      <label>Candidate ID: <input type="number" id="candidateId" /></label>
+      <label>Job ID: <input type="number" id="jobId" /></label>
+      <button onclick="runMatch()">Compute Match Score</button>
+      <div id="matchResult"></div>
+    </section>
+
+    <!-- Step 4: Shortlist -->
+    <section class="card">
+      <h2>4. Shortlist for a Job</h2>
+      <label>Job ID: <input type="number" id="shortlistJobId" /></label>
+      <button onclick="loadShortlist()">Load Shortlist</button>
+      <table id="shortlistTable">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Skills</th>
+            <th>Score</th>
+            <th>Justification</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
