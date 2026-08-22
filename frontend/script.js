@@ -1,8 +1,7 @@
 // script.js
-// Talks to the FastAPI backend. Assumes the API is running on port 8000.
-// (change this if you deploy it somewhere else)
+// Talks to the deployed FastAPI backend on Render.
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = "https://smart-resume-screener-rvc7.onrender.com";
 
 async function createJob() {
   const title = document.getElementById("jobTitle").value;
@@ -13,15 +12,25 @@ async function createJob() {
     return;
   }
 
-  const res = await fetch(`${API_BASE}/jobs`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title, description }),
-  });
+  try {
+    const res = await fetch(`${API_BASE}/jobs`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title, description }),
+    });
 
-  const data = await res.json();
-  document.getElementById("jobStatus").innerText =
-    `Saved! Job ID = ${data.job_id}. Use this ID in step 3/4.`;
+    if (!res.ok) throw new Error("Failed to create job.");
+
+    const data = await res.json();
+
+    document.getElementById("jobStatus").innerText =
+      `✅ Job created successfully!\nJob ID: ${data.job_id}`;
+  } catch (err) {
+    document.getElementById("jobStatus").innerText =
+      `❌ ${err.message}`;
+  }
 }
 
 async function uploadResume() {
@@ -29,33 +38,43 @@ async function uploadResume() {
   const file = fileInput.files[0];
 
   if (!file) {
-    alert("Please choose a resume file first");
+    alert("Please choose a resume file first.");
     return;
   }
 
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await fetch(`${API_BASE}/resumes/upload`, {
-    method: "POST",
-    body: formData,
-  });
+  try {
+    const res = await fetch(`${API_BASE}/resumes/upload`, {
+      method: "POST",
+      body: formData,
+    });
 
-  if (!res.ok) {
-    document.getElementById("parsedResult").innerText = "Upload failed. Check the file type.";
-    return;
+    if (!res.ok) throw new Error("Upload failed. Only PDF or TXT resumes are supported.");
+
+    const data = await res.json();
+
+    document.getElementById("parsedResult").innerText =
+      `✅ Resume Parsed Successfully
+
+Candidate ID: ${data.candidate_id}
+Name: ${data.name}
+Email: ${data.email}
+Phone: ${data.phone}
+
+Skills:
+${data.skills.join(", ")}
+
+Experience:
+${data.experience}
+
+Education:
+${data.education}`;
+  } catch (err) {
+    document.getElementById("parsedResult").innerText =
+      `❌ ${err.message}`;
   }
-
-  const data = await res.json();
-
-  document.getElementById("parsedResult").innerText =
-    `Candidate ID: ${data.candidate_id}\n` +
-    `Name: ${data.name}\n` +
-    `Email: ${data.email}\n` +
-    `Phone: ${data.phone}\n` +
-    `Skills: ${data.skills.join(", ")}\n` +
-    `Experience: ${data.experience.slice(0, 200)}...\n` +
-    `Education: ${data.education.slice(0, 200)}...`;
 }
 
 async function runMatch() {
@@ -63,52 +82,78 @@ async function runMatch() {
   const jobId = document.getElementById("jobId").value;
 
   if (!candidateId || !jobId) {
-    alert("Enter both candidate ID and job ID");
+    alert("Enter both Candidate ID and Job ID.");
     return;
   }
 
-  const res = await fetch(`${API_BASE}/match`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      candidate_id: parseInt(candidateId),
-      job_id: parseInt(jobId),
-    }),
-  });
+  try {
+    const res = await fetch(`${API_BASE}/match`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        candidate_id: Number(candidateId),
+        job_id: Number(jobId),
+      }),
+    });
 
-  if (!res.ok) {
-    document.getElementById("matchResult").innerText = "Could not run match. Check the IDs.";
-    return;
+    if (!res.ok) throw new Error("Could not run AI matching.");
+
+    const data = await res.json();
+
+    document.getElementById("matchResult").innerText =
+      `🎯 Match Score: ${data.score}/10
+
+Reason:
+${data.justification}`;
+  } catch (err) {
+    document.getElementById("matchResult").innerText =
+      `❌ ${err.message}`;
   }
-
-  const data = await res.json();
-  document.getElementById("matchResult").innerText =
-    `Score: ${data.score}/10\nJustification: ${data.justification}`;
 }
 
 async function loadShortlist() {
   const jobId = document.getElementById("shortlistJobId").value;
+
   if (!jobId) {
-    alert("Enter a job ID");
+    alert("Enter a Job ID.");
     return;
   }
 
-  const res = await fetch(`${API_BASE}/shortlist/${jobId}`);
-  const data = await res.json();
+  try {
+    const res = await fetch(`${API_BASE}/shortlist/${jobId}`);
 
-  const tbody = document.querySelector("#shortlistTable tbody");
-  tbody.innerHTML = "";
+    if (!res.ok) throw new Error("Could not load shortlist.");
 
-  data.forEach((row, index) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${index + 1}</td>
-      <td>${row.name}</td>
-      <td>${row.email}</td>
-      <td>${row.skills}</td>
-      <td>${row.score}</td>
-      <td>${row.justification}</td>
-    `;
-    tbody.appendChild(tr);
-  });
+    const data = await res.json();
+
+    const tbody = document.querySelector("#shortlistTable tbody");
+    tbody.innerHTML = "";
+
+    if (data.length === 0) {
+      tbody.innerHTML =
+        `<tr><td colspan="6">No shortlisted candidates found.</td></tr>`;
+      return;
+    }
+
+    data.forEach((row, index) => {
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${row.name}</td>
+        <td>${row.email}</td>
+        <td>${row.skills}</td>
+        <td><strong>${row.score}/10</strong></td>
+        <td>${row.justification}</td>
+      `;
+
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    const tbody = document.querySelector("#shortlistTable tbody");
+    tbody.innerHTML =
+      `<tr><td colspan="6">❌ ${err.message}</td></tr>`;
+  }
 }
