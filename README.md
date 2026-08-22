@@ -234,7 +234,3 @@ B.Tech Computer Science Engineering | VIT-AP University
 * GitHub: https://github.com/NKS2008
 
 ---
-
-## 📄 License
-
-This project is licensed under the **MIT License**.
