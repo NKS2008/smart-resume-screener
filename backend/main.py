@@ -23,8 +23,8 @@ from fastapi.staticfiles import StaticFiles
 
 from database import get_connection, init_db
 from resume_parser import parse_resume
-from llm_matcher import match_resume
-from backend.models import JobDescriptionIn, MatchRequest
+from llm_matcher import get_match_score
+from models import JobDescriptionIn, MatchRequest
 
 app = FastAPI(title="Smart Resume Screener")
 
