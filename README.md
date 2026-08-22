@@ -1,148 +1,225 @@
-# Smart Resume Screener
+# 🚀 Smart Resume Screener — AI-Powered ATS & Resume Matching System
 
-A small full-stack app that parses resumes, extracts basic candidate
-info, and uses an LLM (Claude) to score how well a candidate matches
-a given job description.
+An AI-powered Resume Screening System that parses resumes, extracts candidate information, and intelligently matches candidates against job descriptions using **Claude AI**, **FastAPI**, and **SQLite**. The application provides recruiters with automated resume ranking and justification, making the hiring process faster and smarter.
 
-Built as a college assignment to demonstrate resume parsing + LLM
-based semantic matching.
+**🌐 Live Demo:** https://smart-resume-screener-azure.vercel.app
 
-## Features
+**🔗 Backend API:** https://smart-resume-screener-rvc7.onrender.com
 
-- Upload a resume (PDF or TXT) and get structured data back: name,
-  email, phone, skills, experience, education
-- Add a job description
-- Run an LLM-based match between a candidate and a job — get a
-  1-10 score with a short justification
-- View a ranked shortlist of candidates for a given job
-- Simple browser dashboard, no frontend framework needed
+**💻 GitHub Repository:** https://github.com/NKS2008/smart-resume-screener
 
-## Architecture
+---
 
+## ✨ Features
+
+* 📄 Upload resumes in **PDF** or **TXT** format.
+* 🧠 Extract candidate details (Name, Email, Phone, Skills, Education, Experience).
+* 📝 Create job descriptions through a simple interface.
+* 🤖 AI-powered resume matching using **Claude AI**.
+* 📊 Generate a **match score (0–10)** with detailed justification.
+* 🏆 Automatically shortlist and rank candidates by score.
+* 🌐 Fully deployed frontend and backend for live access.
+
+---
+
+## 🛠️ Tech Stack
+
+| Technology                  | Purpose                      |
+| --------------------------- | ---------------------------- |
+| **Python**                  | Backend programming language |
+| **FastAPI**                 | REST API backend             |
+| **SQLite**                  | Candidate & job database     |
+| **Claude AI API**           | Intelligent resume matching  |
+| **HTML5, CSS3, JavaScript** | Frontend UI                  |
+| **Vercel**                  | Frontend deployment          |
+| **Render**                  | Backend deployment           |
+| **Git & GitHub**            | Version control and hosting  |
+
+---
+
+## 🏗️ Project Architecture
+
+```text
+Frontend (HTML/CSS/JS)
+        │
+        ▼
+FastAPI Backend (Render)
+        │
+        ├── Resume Parser
+        ├── Claude AI Matcher
+        └── SQLite Database
 ```
+
+---
+
+## 📂 Project Structure
+
+```text
 smart-resume-screener/
+│
 ├── backend/
-│   ├── main.py            -> FastAPI app + all routes
-│   ├── database.py        -> SQLite connection + table setup
-│   ├── resume_parser.py   -> PDF/text extraction, regex-based field extraction
-│   ├── llm_matcher.py     -> Calls Claude API for match scoring
-│   └── models.py          -> Pydantic request models
+│   ├── main.py              # FastAPI application
+│   ├── database.py          # SQLite database operations
+│   ├── llm_matcher.py       # Claude AI resume matching
+│   ├── models.py            # Request models
+│   ├── resume_parser.py     # Resume parsing logic
+│   └── __init__.py
+│
 ├── frontend/
 │   ├── index.html
 │   ├── style.css
-│   └── script.js          -> Calls the backend API with fetch()
-├── sample_data/           -> sample resume + JD to try the app with
+│   └── script.js
+│
+├── sample_data/
+│   ├── sample_resume.txt
+│   └── sample_job_description.txt
+│
 ├── requirements.txt
-└── .env.example
+├── .env.example
+├── .gitignore
+└── README.md
 ```
 
-**Flow:**
+---
 
-1. Resume gets uploaded -> text is extracted with `pdfplumber` ->
-   name/email/phone/skills/experience/education are pulled out using
-   regex and a keyword list (no LLM call here, this is cheap and
-   deterministic)
-2. Job description gets saved as-is
-3. When a match is requested, the candidate's full resume text and
-   the job description text are sent to Claude, which returns a
-   JSON object with a score (1-10) and a justification
-4. Results are stored in SQLite so the shortlist can be viewed later
-   without re-calling the LLM
+## 🚀 Live Deployment
 
-I split the "extraction" step and the "matching" step on purpose —
-extraction is just parsing, so it doesn't need an LLM call. The LLM
-is only used where it's actually needed: judging semantic fit, which
-regex can't really do.
+### Frontend (Vercel)
 
-## LLM Prompt Used
+https://smart-resume-screener-azure.vercel.app
 
-This is the exact prompt template from `llm_matcher.py`:
+### Backend (Render)
 
-```
-You are helping a recruiter screen candidates.
+https://smart-resume-screener-rvc7.onrender.com
 
-Compare the following resume with this job description and rate the
-candidate's fit on a scale of 1-10, along with a short justification
-(2-3 sentences) explaining the score. Focus on skills overlap,
-relevant experience, and any obvious gaps.
+---
 
-Resume:
-"""
-{resume_text}
-"""
+## ⚙️ Local Installation
 
-Job Description:
-"""
-{job_description}
-"""
+### 1. Clone the repository
 
-Respond ONLY with valid JSON in exactly this format, nothing else:
-{"score": <integer 1-10>, "justification": "<2-3 sentence explanation>"}
+```bash
+git clone https://github.com/NKS2008/smart-resume-screener.git
+cd smart-resume-screener
 ```
 
-Model used: `claude-sonnet-4-6`
-
-## Setup
-
-1. Clone the repo and install dependencies:
+### 2. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-2. Copy `.env.example` to `.env` and add your Anthropic API key:
+### 3. Configure Environment Variables
+
+Create a `.env` file in the project root.
+
+```env
+ANTHROPIC_API_KEY=YOUR_CLAUDE_API_KEY
+```
+
+> Never commit your API key to GitHub.
+
+### 4. Run the backend
 
 ```bash
-cp .env.example .env
+cd backend
+uvicorn main:app --reload
 ```
 
-3. Export the key (or use a tool like `python-dotenv` if you prefer):
+Backend runs at:
 
-```bash
-export ANTHROPIC_API_KEY=your_key_here
+```text
+http://localhost:8000
 ```
 
-4. Run the backend:
+### 5. Run the frontend
 
-```bash
-uvicorn backend.main:app --reload
-```
+Open `frontend/index.html` in your browser.
 
-5. Open the dashboard in your browser:
+---
 
-```
-http://localhost:8000/app/index.html
-```
+## 📡 API Endpoints
 
-## Trying it out with sample data
+| Method | Endpoint              | Description                  |
+| ------ | --------------------- | ---------------------------- |
+| `GET`  | `/`                   | API health check             |
+| `POST` | `/resumes/upload`     | Upload and parse resume      |
+| `POST` | `/jobs`               | Create job description       |
+| `POST` | `/match`              | Generate AI match score      |
+| `GET`  | `/shortlist/{job_id}` | Ranked candidate shortlist   |
+| `GET`  | `/candidates`         | List all uploaded candidates |
 
-`sample_data/sample_resume.txt` and `sample_data/sample_job_description.txt`
-are included so you can test the app without needing your own resume
-on hand. Upload the resume, paste the JD, then run a match between
-them.
+---
 
-## API Endpoints
+## 📖 How It Works
 
-| Method | Endpoint             | Description                          |
-|--------|-----------------------|---------------------------------------|
-| POST   | `/resumes/upload`     | Upload + parse a resume               |
-| POST   | `/jobs`                | Create a job description              |
-| POST   | `/match`               | Run LLM match for candidate + job     |
-| GET    | `/shortlist/{job_id}`  | Ranked candidates for a job           |
-| GET    | `/candidates`          | List all uploaded candidates          |
+1. Recruiter creates a job description.
+2. Candidate uploads a resume.
+3. Resume parser extracts structured information.
+4. Claude AI compares resume with job description.
+5. System returns:
 
-## Known Limitations
+   * Match Score (0–10)
+   * AI Justification
+   * Ranked shortlist of candidates
 
-- Field extraction (skills/experience/education) is regex/keyword
-  based, so it can miss things on resumes with unusual formatting.
-  A more robust version could send the raw text to the LLM for
-  extraction too, but that adds cost/latency for something regex
-  handles fine most of the time.
-- Skill matching only checks against a fixed list of common tech
-  skills (`resume_parser.py`) — easy to extend but not exhaustive.
-- No authentication - this was built as a class project, not a
-  production system.
+---
 
-## Demo Video
+## 📸 Application Workflow
 
-A 2-3 minute walkthrough is linked here: `<add your demo video link>`
+### Step 1 — Create Job Description
+
+Enter the job title and required skills.
+
+### Step 2 — Upload Resume
+
+Upload a PDF or TXT resume.
+
+### Step 3 — AI Matching
+
+Generate an intelligent compatibility score.
+
+### Step 4 — Candidate Shortlist
+
+Candidates are ranked by AI score.
+
+> *Add screenshots here after capturing your website.*
+
+---
+
+## 🎯 Future Enhancements
+
+* Resume OCR for scanned PDFs.
+* Semantic search using embeddings.
+* Recruiter dashboard with analytics.
+* Email notifications to shortlisted candidates.
+* Multi-job candidate comparison.
+* PostgreSQL/MySQL database support.
+
+---
+
+## 📚 Skills Demonstrated
+
+* FastAPI REST API Development
+* AI Integration using Claude API
+* Resume Parsing with Python
+* SQLite Database Management
+* Frontend Development (HTML, CSS, JavaScript)
+* Full Stack Deployment (Vercel + Render)
+* Git & GitHub Version Control
+
+---
+
+## 👩‍💻 Author
+
+**Kavya S N**
+
+B.Tech Computer Science Engineering | VIT-AP University
+
+* GitHub: https://github.com/NKS2008
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
