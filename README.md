@@ -186,6 +186,21 @@ Candidates are ranked by AI score.
 > *Add screenshots here after capturing your website.*
 
 ---
+## 📸 Application Screenshots
+
+### 🏠 Home Page
+
+The landing page allows recruiters to create a job description, upload resumes, and perform AI-powered resume screening.
+
+![Smart Resume Screener Home Page](images/homepage.png)
+
+---
+
+### ⚙️ Resume Upload, AI Matching & Shortlisting
+
+Upload a candidate resume, generate an AI compatibility score using Claude AI, and view shortlisted candidates ranked by score.
+
+![Resume Screening Workflow](images/workflow.png)
 
 ## 🎯 Future Enhancements
 
